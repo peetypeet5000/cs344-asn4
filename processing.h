@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef PROCESSING_H
+#define PROCESSING_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,9 +8,12 @@
 #include <unistd.h>
 
 #include "main.h"
+#include "buffers.h"
 
-struct command getCommand();
-struct command tokenize_input();
-void process_input(struct command*);
+void do_input();
+
+void do_line_seperator();
+//void do_plus_sign();
+//void do_output();
 
 #endif

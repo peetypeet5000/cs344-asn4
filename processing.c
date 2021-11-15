@@ -1,18 +1,37 @@
-#include "input.h"
+#include "processing.h"
 
-struct command getCommand() {
 
-    // Get user input and tokenize it
-    struct command tokenized_input = tokenize_input();
-    
-    // Process user input into useful stuct
-    process_input(&tokenized_input);
+void do_input() {
+    char* input_buffer = NULL;
+    size_t input_len;
 
-    return tokenized_input;
+    // Get input from the user
+    // Note: Allowing getline to malloc input_buffer, make sure to free
+    while(done_processing == false) {
+        getline(&input_buffer, &input_len, stdin);
 
+        // Insert into buffer and increment count
+        strncpy(buffer_1[insert_index_1++], input_buffer, 999);
+        count_1++;
+
+        // Check if it's STOP and at max there are 5 characters (+1 for \n)
+        if(strncmp(input_buffer, "STOP", 4) == 0 && strlen(input_buffer) == 5) {
+            done_processing = true;
+        }
+
+        // Free memory associated with input and set it back to null
+        free(input_buffer);
+        input_buffer = NULL;
+    }
 }
 
 
+
+void do_line_seperator() {
+
+}
+
+/*
 struct command tokenize_input() {
     struct command tokenized_input = {{0}};
     char* input = {0};
@@ -122,3 +141,4 @@ void process_input(struct command* input) {
     input->arg_count = new_arg_count;
 
 }
+*/

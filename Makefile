@@ -1,10 +1,12 @@
 CC = gcc --std=gnu99 -g
 exe_file = line_processor
-$(exe_file): main.o processing.o
-	$(CC) main.o processing.o -o $(exe_file)
+$(exe_file): main.o processing.o buffers.o
+	$(CC) main.o processing.o buffers.o -o $(exe_file)
 
-processing.o: input.c input.h
-	$(CC) -c input.c
+processing.o: processing.c processing.h
+	$(CC) -c processing.c
+buffers.o: buffers.c buffers.h
+	$(CC) -c buffers.c
 main.o: main.c main.h
 	$(CC) -c main.c
 
