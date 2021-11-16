@@ -13,7 +13,7 @@
 void do_input();
 
 void do_line_seperator();
-//void do_plus_sign();
+void do_plus_sign();
 //void do_output();
 
 #endif

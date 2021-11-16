@@ -30,127 +30,67 @@ void do_input() {
 
 
 void do_line_seperator() {
+    char private_buffer[1000];
 
     for(int i = 0; i < count_1; i++) {
-        char* newline_location = strchr(buffer_1[i], '\n');
+        // Copy the current location in the buffer to a private buffer
+        strcpy(private_buffer, buffer_1[i]);
+
+        char* newline_location = strchr(private_buffer, '\n');
 
         // If a newline was found, replace it with a space
         if(newline_location != NULL) {
             *newline_location = 32;
         }
 
+        // Copy into next buffer
+        strcpy(buffer_2[insert_index_2++], private_buffer);
+        count_2++;
     }
 
 }
 
-/*
-struct command tokenize_input() {
-    struct command tokenized_input = {{0}};
-    char* input = {0};
-    size_t size = 0;
-    int args_read = 0;
-    char *saveptr;
 
-    // Get a line of user input
-    do {
-        printf(": ");
-        fflush(stdout);
-        getline(&input, &size, stdin);
-    } while(strlen(input) < 2);
+void do_plus_sign() {
+    char private_buffer[1000] = {0};
 
-    // Clean the newline character from the input
-    input[strlen(input) - 1] = 0;
+    for(int i = 0; i < count_2; i++) {
+        char result_buffer[1000] = {0};
+        char* private_buffer_location = &private_buffer;    // ptr to working location in buffer
 
-    // Expand $$
-    for(int i = 0; i < strlen(input); i++) {
-        if(input[i] == '$' && input[i+1] == '$') {
-            // split the string at this point
-            char* first_half = calloc(strlen(input) + 16, sizeof(char));
-            strncpy(first_half, input, i);
+        // Initially copy the working string into the buffer & get first substr 
+        strcpy(private_buffer, buffer_2[read_index_2++]);
+        char* plus_location = strstr(private_buffer, "++");
 
-            // get second half of the string
-            char* second_half = calloc(strlen(input), sizeof(char));
-            for(int j = 0; j < strlen(input) - i - 1; j++) {
-                second_half[j] = input[i + j + 2];
+        // If there are no occuraces, just copy string
+        if(plus_location == NULL) {
+            strcpy(result_buffer, private_buffer);
+        } else {
+            // Else, loop and insert ^
+            while(plus_location != NULL) {
+                // If a ++ was found, copy the first part of the stiring to result
+                strncat(result_buffer, private_buffer_location, strlen(private_buffer_location) - strlen(plus_location));
+
+                // Concatinate a ^
+                strcat(result_buffer, "^");
+
+                // Find next occurance
+                char* temp = plus_location;
+                plus_location = strstr(plus_location + 2, "++");
+
+                // If this is the last occurance, copy the rest of the string in
+                if(plus_location == NULL) {
+                    strcat(result_buffer, temp + 2);
+                }
+
+                // Otherwise, adjust pointer for working buffer to ignore processed part
+                private_buffer_location = temp + 2;
             }
-
-            // get the pid
-            char pid[16];
-            sprintf(pid, "%d", getpid());
-
-            strcat(first_half, pid);
-            strcat(first_half, second_half);
-
-            free(input);
-            input = calloc(strlen(first_half), sizeof(char));
-            strncpy(input, first_half, strlen(first_half));
-            break; //only need one deferernace
         }
+
+        // Copy result to next buffer
+        strcpy(buffer_3[insert_index_3++], result_buffer);
+        count_3++;
     }
-    
-
-    // Get first section
-    char *token = strtok_r(input, " ", &saveptr);
-
-    // Keep tokenizing until there are no more arguments
-    while(token != NULL) {
-        // Allocated space, copy in, get next token
-        tokenized_input.args[args_read] = calloc(strlen(token) + 1, sizeof(char));
-        // Post increments args_read
-        strcpy(tokenized_input.args[args_read++], token);
-        token = strtok_r(NULL, " ", &saveptr);
-    }
-    // Save the number of arguments in the struct
-    tokenized_input.arg_count = args_read;
-
-    free(input);
-
-    return tokenized_input;
 
 }
-
-void process_input(struct command* input) {
-    // Keep track of how many arguemnts are not from the command itself
-    int new_arg_count = input->arg_count;
-
-    // Search for trailing & for background
-    if(strcmp(input->args[input->arg_count - 1], "&") == 0) {
-        input->background = true;
-        // Set redirection to /dev/null by default
-        strncpy(input->input_redirection, "/dev/null", strlen("/dev/null"));
-        strncpy(input->output_redirection, "/dev/null", strlen("/dev/null"));
-        new_arg_count--;
-    }
-
-    // Serach for input redirection
-    for(int i = 0; i < input->arg_count; i++) {
-        if(input->args[i][0] == '<'){
-            // Make sure there is a value after the redirection
-            if(i + 1 < input->arg_count) {
-                strncpy(input->input_redirection, input->args[i+1], 255);
-                // Subtract off the two arguments that are related to redirection
-                new_arg_count = new_arg_count - 2;
-            }
-        }
-    }
-
-    // Search for output redirection
-    for(int i = 0; i < input->arg_count; i++) {
-        if(input->args[i][0] == '>'){
-            // Make sure there is a value after the redirection
-            if(i + 1 < input->arg_count) {
-                strncpy(input->output_redirection, input->args[i+1], 255);
-                new_arg_count = new_arg_count - 2;
-            }
-        }
-    }
-
-    // Remove the arguments that were for redirection or bg
-    for(int i = new_arg_count; i < input->arg_count; i++) {
-        free(input->args[i]);
-        input->args[i] = NULL;
-    }
-    input->arg_count = new_arg_count;
-
-}
-*/

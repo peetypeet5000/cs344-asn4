@@ -11,5 +11,7 @@ int main(int argc, char *argv[])
 
     do_line_seperator();
 
+    do_plus_sign();
+
 
 }
