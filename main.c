@@ -9,5 +9,7 @@ int main(int argc, char *argv[])
 
     do_input();
 
+    do_line_seperator();
+
 
 }

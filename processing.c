@@ -12,11 +12,13 @@ void do_input() {
 
         // Insert into buffer and increment count
         strncpy(buffer_1[insert_index_1++], input_buffer, 999);
-        count_1++;
 
         // Check if it's STOP and at max there are 5 characters (+1 for \n)
         if(strncmp(input_buffer, "STOP", 4) == 0 && strlen(input_buffer) == 5) {
             done_processing = true;
+        // Only increment count if the line is not the STOP line
+        } else {
+            count_1++;
         }
 
         // Free memory associated with input and set it back to null
@@ -28,6 +30,16 @@ void do_input() {
 
 
 void do_line_seperator() {
+
+    for(int i = 0; i < count_1; i++) {
+        char* newline_location = strchr(buffer_1[i], '\n');
+
+        // If a newline was found, replace it with a space
+        if(newline_location != NULL) {
+            *newline_location = 32;
+        }
+
+    }
 
 }
 
