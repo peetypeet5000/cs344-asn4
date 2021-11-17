@@ -2,12 +2,14 @@
 
 // Actual input function
 void* do_input(void* args) {
-    char* input_buffer = NULL;
-    size_t input_len;
+    char* input_buffer;
 
-    // Get input from the user
-    // Note: Allowing getline to malloc input_buffer, make sure to free
     while(done_processing == false) {
+        // Allocate private buffer
+        input_buffer = malloc(1000);
+        size_t input_len = 1000;
+
+        // Get a line of input
         getline(&input_buffer, &input_len, stdin);
 
         // Check if it's STOP and at max there are 5 characters (+1 for \n)
@@ -60,10 +62,10 @@ void* do_plus_sign(void* args) {
     // Keep processing until no more data is possible
     while(done_processing == false || count_1 > 0 || count_2 > 0) {
         char result_buffer[1000] = {0};
-        char* private_buffer_location = private_buffer;    // ptr to working location in buffer
 
         // Initially copy the working string into the buffer & get first substr 
         private_buffer = get_buff_2();
+        char* private_buffer_location = private_buffer;    // ptr to working location in buffer
         char* plus_location = strstr(private_buffer, "++");
 
         // If there are no occuraces, just copy string
