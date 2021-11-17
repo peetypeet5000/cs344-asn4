@@ -1,6 +1,6 @@
 #include "processing.h"
 
-
+// Actual input function
 void do_input() {
     char* input_buffer = NULL;
     size_t input_len;
@@ -10,15 +10,12 @@ void do_input() {
     while(done_processing == false) {
         getline(&input_buffer, &input_len, stdin);
 
-        // Insert into buffer and increment count
-        strncpy(buffer_1[insert_index_1++], input_buffer, 999);
-
         // Check if it's STOP and at max there are 5 characters (+1 for \n)
         if(strncmp(input_buffer, "STOP", 4) == 0 && strlen(input_buffer) == 5) {
             done_processing = true;
-        // Only increment count if the line is not the STOP line
+        // Only place result in buffer if it is not STOP
         } else {
-            count_1++;
+            put_buff_1(input_buffer);
         }
 
         // Free memory associated with input and set it back to null
@@ -34,7 +31,7 @@ void do_line_seperator() {
 
     for(int i = 0; i < count_1; i++) {
         // Copy the current location in the buffer to a private buffer
-        strcpy(private_buffer, buffer_1[i]);
+        strcpy(private_buffer, buffer_1[read_index_1++]);
 
         char* newline_location = strchr(private_buffer, '\n');
 
@@ -93,4 +90,28 @@ void do_plus_sign() {
         count_3++;
     }
 
+}
+
+
+
+void do_output() {
+    char private_buffer[1000] = {0};
+    char result_buffer[82] = {0};
+    int result_length = 0;
+
+    for(int i = 0; i < count_3; i++) {
+        strcpy(private_buffer, buffer_3[read_index_3++]);
+
+        for(int j = 0; j < strlen(private_buffer); j++) {
+            result_buffer[result_length++] = private_buffer[j];
+
+            if(result_length == 80) {
+                result_buffer[80] = '\n';
+                write(STDOUT_FILENO, result_buffer, 81);
+
+                memset(result_buffer, '\0', 82);
+                result_length = 0;
+            }
+        }
+    }
 }
