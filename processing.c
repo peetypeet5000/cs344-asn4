@@ -1,7 +1,7 @@
 #include "processing.h"
 
 // Actual input function
-void do_input() {
+void* do_input(void* args) {
     char* input_buffer = NULL;
     size_t input_len;
 
@@ -22,16 +22,19 @@ void do_input() {
         free(input_buffer);
         input_buffer = NULL;
     }
+
+    return EXIT_SUCCESS;
 }
 
 
 
-void do_line_seperator() {
-    char private_buffer[1000];
+void* do_line_seperator(void* args) {
+    char* private_buffer;
 
-    for(int i = 0; i < count_1; i++) {
+    // Keep processing while more user input is possible or while buffer is still full
+    while(done_processing == false || count_1 > 0) {
         // Copy the current location in the buffer to a private buffer
-        strcpy(private_buffer, buffer_1[read_index_1++]);
+        private_buffer = get_buff_1();
 
         char* newline_location = strchr(private_buffer, '\n');
 
@@ -41,22 +44,26 @@ void do_line_seperator() {
         }
 
         // Copy into next buffer
-        strcpy(buffer_2[insert_index_2++], private_buffer);
-        count_2++;
+        put_buff_2(private_buffer);
+
+        // Free stack memory from private buffer
+        free(private_buffer);
     }
 
+    return EXIT_SUCCESS;
 }
 
 
-void do_plus_sign() {
-    char private_buffer[1000] = {0};
+void* do_plus_sign(void* args) {
+    char* private_buffer;
 
-    for(int i = 0; i < count_2; i++) {
+    // Keep processing until no more data is possible
+    while(done_processing == false || count_1 > 0 || count_2 > 0) {
         char result_buffer[1000] = {0};
-        char* private_buffer_location = &private_buffer;    // ptr to working location in buffer
+        char* private_buffer_location = private_buffer;    // ptr to working location in buffer
 
         // Initially copy the working string into the buffer & get first substr 
-        strcpy(private_buffer, buffer_2[read_index_2++]);
+        private_buffer = get_buff_2();
         char* plus_location = strstr(private_buffer, "++");
 
         // If there are no occuraces, just copy string
@@ -86,25 +93,31 @@ void do_plus_sign() {
         }
 
         // Copy result to next buffer
-        strcpy(buffer_3[insert_index_3++], result_buffer);
-        count_3++;
+        put_buff_3(result_buffer);
+
+        // Free memory from private buffer
+        free(private_buffer);
     }
 
+    return EXIT_SUCCESS;
 }
 
 
 
-void do_output() {
-    char private_buffer[1000] = {0};
+void* do_output(void* args) {
+    char* private_buffer;
     char result_buffer[82] = {0};
     int result_length = 0;
 
-    for(int i = 0; i < count_3; i++) {
-        strcpy(private_buffer, buffer_3[read_index_3++]);
+    while(done_processing == false || count_1 > 0 || count_2 > 0 || count_3 > 0) {
+        // Place current buffer location in private buffer
+        private_buffer = get_buff_3();
 
+        // Loop through each char in the buffer, appending to result
         for(int j = 0; j < strlen(private_buffer); j++) {
             result_buffer[result_length++] = private_buffer[j];
 
+            // Whenever the result reaches 80 chars, print to stdout
             if(result_length == 80) {
                 result_buffer[80] = '\n';
                 write(STDOUT_FILENO, result_buffer, 81);
@@ -113,5 +126,10 @@ void do_output() {
                 result_length = 0;
             }
         }
+
+        // Free memory associated with private buffer
+        free(private_buffer);
     }
+
+    return EXIT_SUCCESS;
 }

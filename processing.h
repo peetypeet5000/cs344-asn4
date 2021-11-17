@@ -10,9 +10,9 @@
 #include "main.h"
 #include "buffers.h"
 
-void do_input();
-void do_line_seperator();
-void do_plus_sign();
-void do_output();
+void* do_input(void*);
+void* do_line_seperator(void*);
+void* do_plus_sign(void*);
+void* do_output(void*);
 
 #endif

@@ -1,4 +1,4 @@
-CC = gcc --std=gnu99 -g
+CC = gcc --std=gnu99 -pthread -g
 exe_file = line_processor
 $(exe_file): main.o processing.o buffers.o
 	$(CC) main.o processing.o buffers.o -o $(exe_file)
