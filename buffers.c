@@ -29,6 +29,12 @@ bool done_processing = false;
 /**** NOTE: Some of this code is borrowed from the example given in the tips section
  * Located at: https://replit.com/@cs344/65prodconspipelinec ***********************/
 
+
+
+/*
+ * Puts a line of text into buffer 1,
+ * locks and unlocks mutex
+ */
 void put_buff_1(char* input_buffer){
     // Lock the mutex before putting the item in the buffer
     pthread_mutex_lock(&mutex_1);
@@ -43,6 +49,12 @@ void put_buff_1(char* input_buffer){
 }
 
 
+
+/*
+ * Returns a line of text from buffer 1,
+ * locks and unlocks mutex. Must free returned
+ * text
+ */
 char* get_buff_1() {
     // Declare stack space for string and allocate memory
     char* item;
@@ -70,6 +82,11 @@ char* get_buff_1() {
 }
 
 
+
+/*
+ * Puts a line of text into buffer 2,
+ * locks and unlocks mutex
+ */
 void put_buff_2(char* input_buffer){
     // Lock the mutex before putting the item in the buffer
     pthread_mutex_lock(&mutex_2);
@@ -84,6 +101,12 @@ void put_buff_2(char* input_buffer){
 }
 
 
+
+/*
+ * Returns a line of text from buffer 2,
+ * locks and unlocks mutex. Must free returned
+ * text
+ */
 char* get_buff_2() {
     // Declare stack space for string and allocate memory
     char* item;
@@ -112,6 +135,10 @@ char* get_buff_2() {
 
 
 
+/*
+ * Puts a line of text into buffer 3,
+ * locks and unlocks mutex
+ */
 void put_buff_3(char result_buffer[1000]){
     // Lock the mutex before putting the item in the buffer
     pthread_mutex_lock(&mutex_3);
@@ -127,6 +154,11 @@ void put_buff_3(char result_buffer[1000]){
 
 
 
+/*
+ * Returns a line of text from buffer 1,
+ * locks and unlocks mutex. Must free returned
+ * text
+ */
 char* get_buff_3() {
     // Declare stack space for string and allocate memory
     char* item;

@@ -32,6 +32,4 @@ char* get_buff_2();
 void put_buff_3(char[1000]);
 char* get_buff_3();
 
-
-
 #endif

@@ -1,8 +1,8 @@
 #include "main.h"
 
 /*
-Checks the provided command line argument, starts functions
-to process file & start user interactive menu
+Starts a text processing program with 4 threads.
+Program continues until STOP\n is written to stdin.
 */
 int main(int argc, char *argv[])
 {
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     pthread_create(&plus_sign_t, NULL, do_plus_sign, NULL);
     pthread_create(&output_t, NULL, do_output, NULL);
 
-    // Close threads
+    // Close threads when finished
     pthread_join(input_t, NULL);
     pthread_join(line_seperator_t, NULL);
     pthread_join(plus_sign_t, NULL);

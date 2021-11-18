@@ -1,6 +1,11 @@
 #include "processing.h"
 
-// Actual input function
+
+/*
+ * Get user input from user until they write
+ * STOP on it's own line. Place inputs in
+ * first buffer
+ */
 void* do_input(void* args) {
     char* input_buffer;
 
@@ -12,13 +17,13 @@ void* do_input(void* args) {
         // Get a line of input
         getline(&input_buffer, &input_len, stdin);
 
-        // Check if it's STOP and at max there are 5 characters (+1 for \n)
+        // Check if line is STOP, if so stop getting input
         if(strncmp(input_buffer, "STOP", 4) == 0 && strlen(input_buffer) == 5) {
             done_processing = true;
-        // Only place result in buffer if it is not STOP
-        } else {
-            put_buff_1(input_buffer);
         }
+
+        // Place result in buffer
+        put_buff_1(input_buffer);
 
         // Free memory associated with input and set it back to null
         free(input_buffer);
@@ -30,6 +35,10 @@ void* do_input(void* args) {
 
 
 
+/*
+ * Consumes items from buffer 1 and replaces
+ * \n with spaces. Result is placed in buffer 2
+ */
 void* do_line_seperator(void* args) {
     char* private_buffer;
 
@@ -56,6 +65,11 @@ void* do_line_seperator(void* args) {
 }
 
 
+
+/*
+ * Consumes items from buffer 2 and replaces
+ * ++ with ^. Result is placed in buffer 3
+ */
 void* do_plus_sign(void* args) {
     char* private_buffer;
 
@@ -106,14 +120,25 @@ void* do_plus_sign(void* args) {
 
 
 
+/*
+ * Consumes items from buffer 3.
+ * When 80 characters are consumed,
+ * the result is printed to stdout
+ */
 void* do_output(void* args) {
     char* private_buffer;
     char result_buffer[82] = {0};
     int result_length = 0;
 
-    while(done_processing == false || count_1 > 0 || count_2 > 0 || count_3 > 0) {
+    while(1) {
         // Place current buffer location in private buffer
         private_buffer = get_buff_3();
+
+        // Check if line is STOP, if so break
+        if(strncmp(private_buffer, "STOP", 4) == 0 && strlen(private_buffer) == 5) {
+            free(private_buffer);
+            break;
+        }
 
         // Loop through each char in the buffer, appending to result
         for(int j = 0; j < strlen(private_buffer); j++) {
